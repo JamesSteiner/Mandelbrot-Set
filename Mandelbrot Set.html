@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+      (() => {
+          // Create Canvas
+          const myCanvas = document.createElement('canvas');
+          myCanvas.width = 1920;
+          myCanvas.height = 1080;
+          document.body.appendChild(myCanvas);
+          const ctx = myCanvas.getContext('2d');
+          // Start drawing
+          function checkIfBelongsToMandelbrotSet(x,y) {
+            let realComponentOfResult = x;
+            let imaginaryComponentOfResult = y;
+            // Set max number of iterations
+            const maxIterations = 200;
+            for (let i = 0; i < maxIterations; i++) {
+              //caluates real component
+              //I would suggest calculating algebrically by hand to understand this
+              const tempRealComponent = realComponentOfResult * realComponentOfResult - imaginaryComponentOfResult * imaginaryComponentOfResult + x;
+              //caluates imaginary component
+              const tempImaginaryComponent = 2.0 * realComponentOfResult * imaginaryComponentOfResult + y;
+              //sets the results to the new input
+              realComponentOfResult = tempRealComponent;
+              imaginaryComponentOfResult = tempImaginaryComponent;
+              // Return a number as a percentage (for shading) and checks if in Mandelbrot set
+              if (realComponentOfResult * imaginaryComponentOfResult > 4) {
+               return (i / maxIterations * 100);
+              }
+            }
+            // Return zero if in set
+            return 0;
+          }
+
+          // Set appearance settings
+          const zoom = myCanvas.height / 2;
+          const panX = 2;
+          const panY = 1;
+          for (let x = 0; x < myCanvas.width; x++) {
+            for (let y = 0; y < myCanvas.height; y++) {
+              const belongsToSet = checkIfBelongsToMandelbrotSet(x / zoom - panX, y / zoom - panY);
+              if (belongsToSet === 0) {
+                ctx.fillStyle = '#000';
+                // Draw a black pixel
+                ctx.fillRect(x,y, 1,1); //fillRect(x position, y position, width, height)
+              } else {
+                ctx.fillStyle = `hsl(350, 100%, ${belongsToSet}%)`;
+                // Draw a colorful pixel
+                ctx.fillRect(x,y, 1,1); //fillRect(x position, y position, width, height)
+              }
+            }
+          }
+      })();
+    </script>
+  </body>
+</html>
